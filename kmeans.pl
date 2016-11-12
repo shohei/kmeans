@@ -23,7 +23,7 @@ my $global_min;
 
 my @points;
 sub read_file(){
-    open(IN, "< irisdata.txt");
+    open(IN, "< ./dat/irisdata.txt");
 	while(<IN>){
 		if($loop_count==0){
 			$loop_count++; 
@@ -152,10 +152,32 @@ sub recalculate_center(){
 	} 
 }
 
+sub write_to_file(){
+	open(OUT,'> result.csv');
+
+	foreach my $point(@points){
+	  print OUT $point->[0] . ',';	
+	  print OUT $point->[1] . ',';	
+	  print OUT $point->[2] . ',';	
+	  print OUT $point->[3] . "\n";	
+	}
+	close(OUT);
+
+	open(OUT,'> center.csv');
+
+	foreach my $center(@centers){
+	  print OUT $center->[0] . ',';	
+	  print OUT $center->[1] . ',';	
+	  print OUT "center" . "\n";	
+	}
+	close(OUT);
+}
+
 sub k_means(){
   read_file();
   # select_random_center();
   select_center_from_sample();
+  # loop for 1000 times
 	for(my $i=0;$i<1000;$i++){
 	  assign_label();
 	  recalculate_center();
@@ -164,11 +186,9 @@ sub k_means(){
 
 	say 'computation done.';
 	say Dumper @centers;
+
+	write_to_file();
 }
 
 k_means();
-
-
-
-
 
