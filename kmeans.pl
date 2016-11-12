@@ -6,6 +6,7 @@ use feature qw(say);
 use Switch;
 use Data::Dumper;
 use List::Util qw(first max maxstr min minstr reduce shuffle sum);
+use POSIX;
 
 # k-means clustering
 # k=3
@@ -45,10 +46,20 @@ $global_min = min($smin,$lmin);
 
 my @centers; 
 
-sub select_center{
+sub select_random_center{
 	for(my $i=0;$i<3;$i++){
 	  my $xc = rand($global_max-$global_min)+$global_min;
 	  my $yc = rand($global_max-$global_min)+$global_min;
+	  my $pair = [$xc,$yc];
+	  @centers[$i] = $pair;
+	}
+}
+
+sub select_center_from_sample{
+	my $length = $#points+1;
+	for(my $i=0;$i<3;$i++){
+	  my $xc = $points[floor(rand($length))][0];
+	  my $yc = $points[floor(rand($length))][1];
 	  my $pair = [$xc,$yc];
 	  @centers[$i] = $pair;
 	}
@@ -142,10 +153,10 @@ sub recalculate_center(){
 }
 
 sub k_means(){
-	read_file();
-
+  read_file();
+  # select_random_center();
+  select_center_from_sample();
 	for(my $i=0;$i<1000;$i++){
-  	  select_center();
 	  assign_label();
 	  recalculate_center();
 	  say "loop $i has finished";
